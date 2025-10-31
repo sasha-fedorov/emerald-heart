@@ -1,0 +1,35 @@
+:root {
+  font-size: 20px;
+  --font-color: limegreen;
+  --bg-color: #1a1a1a;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--font-color);
+  font-family: monospace;
+}
+
+#output {
+  width: 100%;
+  height: 70vh;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+#input {
+  width: 100%;
+  background: var(--bg-color);
+  color: var(--font-color);
+  border: none;
+  outline: none;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  margin: 1rem;
+}

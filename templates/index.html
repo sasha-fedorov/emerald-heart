@@ -4,44 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Emerald Heart</title>
-  <style>
-    :root {
-      font-size: 20px;
-      --font-color: limegreen;
-      --bg-color: #1a1a1a;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--font-color);
-      font-family: monospace;
-    }
-
-    #output {
-      width: 100%;
-      height: 70vh;
-      padding: 1rem;
-      overflow-y: auto;
-    }
-
-    #input {
-      width: 100%;
-      background: var(--bg-color);
-      color: var(--font-color);
-      border: none;
-      outline: none;
-      font-family: monospace;
-      font-size: 1rem;
-    }
-
-    .input-container {
-      display: flex;
-      flex-direction: row;
-      gap: 0.25rem;
-      margin: 1rem;
-    }
-  </style>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
@@ -51,39 +14,7 @@
     <input id="input" type="text" autofocus placeholder="Type a command..." />
   </div>
 
-  <script>
-    const input = document.getElementById('input');
-    const consoleDiv = document.getElementById('output');
-
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        const command = input.value;
-        printToConsole(`> ${command}`);
-        sendCommand(command);
-        input.value = '';
-      }
-    });
-
-    function printToConsole(text) {
-      consoleDiv.innerHTML += text + '<br>';
-      consoleDiv.scrollTop = consoleDiv.scrollHeight;
-    }
-
-    async function sendCommand(command) {
-      const res = await fetch('/command', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          command
-        })
-      });
-      const data = await res.json();
-      if (data.response)
-        printToConsole(data.response);
-    }
-  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 
 </html>
