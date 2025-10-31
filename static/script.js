@@ -1,31 +1,46 @@
-const input = document.getElementById('input');
+const inputField = document.getElementById('input');
 const consoleDiv = document.getElementById('output');
+var action = 'init';
 
-input.addEventListener('keydown', function (e) {
+window.onload = function () {
+  sendInput()
+};
+
+inputField.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
-    const command = input.value;
-    printToConsole(`> ${command}`);
-    sendCommand(command);
-    input.value = '';
+    const input = inputField.value;
+    printToConsole(`> ${input}`);
+    sendInput(input);
+    inputField.value = '';
   }
 });
 
 function printToConsole(text) {
-  consoleDiv.innerHTML += text + '<br>';
+  const formatted = text.replace(/\n/g, '<br>') + '<br>';
+  consoleDiv.innerHTML += formatted;
   consoleDiv.scrollTop = consoleDiv.scrollHeight;
 }
 
-async function sendCommand(command) {
-  const res = await fetch('/command', {
+async function sendInput(input = '') {
+  const res = await fetch('/action', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      command
+      input,
+      action
     })
   });
   const data = await res.json();
-  if (data.response)
+
+  if (data.response) {
     printToConsole(data.response);
+  }
+  if (data.error) {
+    printToConsole(data.error);
+  }
+  if (data.next_action) {
+    action = data.next_action;
+  }
 }
