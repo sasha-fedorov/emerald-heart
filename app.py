@@ -14,6 +14,76 @@ sessions = db["sessions"]
 users = db["users"]
 
 
+class User:
+    """
+    A class to represent a user.
+
+    Attributes:
+    ----------
+    name : str
+        The name of the user.
+    password : str
+        The user's password.
+    """
+
+    def __init__(self, name: str, password: str):
+        """
+        Initializes a new User instance.
+
+        Parameters:
+        ----------
+        name : str
+            The name of the user.
+        password : str
+            The user's password.
+        session_id : str
+            The user current session ID.
+        """
+        self._id = name
+        self.password = password
+
+    def create_user(self):
+        """ Create a user entry """
+        user = users.find_one({"_id": self._id})
+        if (user):
+            raise KeyError()
+        else:
+            users.insert_one({"_id": self._id, "password": self.password})
+
+        return self
+
+
+def create_user(name: str, password: str):
+    """
+    Create a user entry
+
+    Parameters:
+    ----------
+    name : str
+        The name of the user.
+    password : str
+        The user's password.
+
+    Returns:
+    ----------
+    Created entry.
+    """
+    user = users.find_one({"_id": name})
+    if (user):
+        raise KeyError("User with this name is alredy exists")
+    else:
+        user = users.insert_one({"_id": name, "password": password})
+
+    return user
+
+
+def is_user_exists(username):
+    user = users.find_one({"_id": username})
+    if (user):
+        return True
+    return False
+
+
 @app.route('/')
 def index():
     """ Returns page to show """
