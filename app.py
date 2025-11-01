@@ -9,6 +9,9 @@ app = Flask(__name__)
 
 CONNECTION_STRING = os.getenv('MONGODB_CONNECTION_STRING')
 client = MongoClient(CONNECTION_STRING)
+db = client["emerald-heart"]
+sessions = db["sessions"]
+users = db["users"]
 
 
 @app.route('/')
