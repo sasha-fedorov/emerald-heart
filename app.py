@@ -1,11 +1,13 @@
 import os
+import re
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
 
 load_dotenv()
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SESSION_SECRET_KEY")
 
 CONNECTION_STRING = os.getenv('MONGODB_CONNECTION_STRING')
 client = MongoClient(CONNECTION_STRING)
@@ -106,44 +108,80 @@ def action():
     action = data.get('action', '').strip().lower()
     input = data.get('input', '').strip().lower()
 
-    result = {
-        "response": "",
-        "next_action": action,
-        "error": ""
-    }
+    response = ""
+    next_action = action
+    error = ""
 
     try:
         match action:
             case "init":
-                result["response"] = "Login or create an account: \n 1. Login \n 2. Create an account"
-                result["next_action"] = "login_or_registration"
+                response = "Login or create an account: \n " \
+                           "1. Login \n " \
+                           "2. Create an account"
+                next_action = "login_or_registration"
 
             case "login_or_registration":
                 try:
-                    selection = int(input)
-                    match selection:
-                        case 1:
-                            result["response"] = "Enter username:"
-                            result["next_action"] = "registration_password"
-                        case 2:
-                            result["response"] = "Enter username:"
-                            result["next_action"] = "login_password"
-                        case _: raise Exception
-                except Exception:
-                    result["error"] = f"Invalid input: {input}. Please try again"
+                    match input:
+                        case "1":
+                            response = "Enter username:"
+                            next_action = "login_username"
+                        case "2":
+                            response = "Enter username:"
+                            next_action = "registration_username"
+                        case _: raise ValueError
+                except ValueError:
+                    error = "Invalid input. Please enter 1 or 2"
+
+            case "registration_username":
+                pattern = re.compile(r"^[A-Za-z][A-Za-z0-9._-]{2,19}$")
+                if (pattern.match(input)):
+                    if (is_user_exists(input)):
+                        error = "This username is unavailable. Try another."
+                    else:
+                        response = "Enter password:"
+                        next_action = "registration_password"
+                        session["username"] = input
+                else:
+                    error = "Invalid username. Rules:\n"\
+                            "- Must start with a letter.\n"\
+                            "- Can contain letters, numbers, '.', '-', '_'.\n"\
+                            "- Length must be between 3 and 20 characters."
+
+            case "registration_password":
+                if (len(input) != len(data.get('input', ''))):
+                    error = "Password can not contain white spaces."
+                elif (len(input) < 2 | len(input) > 19):
+                    error = "Password must contain 3 and 20 characters."
+                else:
+                    try:
+                        name = session.get("username")
+                        if (name is None):
+                            raise KeyError()
+
+                        user = User(name, input)
+                        user.create_user()
+                        # next action main menu
+                    except KeyError:
+                        error = "Something went wrong. Try again."
+                        next_action = "login_or_registration"
 
             case _:
-                result["error"] = "Unexpected error occurs, please try again"
-                result["next_action"] = "init"
+                error = "Unexpected error occurs, please try again"
+                next_action = "init"
+                response = "Login or create an account: \n " \
+                           "1. Login \n " \
+                           "2. Create an account"
 
+        result = {
+            "response": response,
+            "next_action": next_action,
+            "error": error
+        }
         return jsonify(result)
     except Exception as e:
-        return jsonify({'error': f"Unexpected error: {e}, please try again",
+        return jsonify({'error': f"Unexpected error: {e}. Please try again",
                         'next_action': 'init'})
-
-
-# result["response"] = ""
-# result["next_action"] = ""
 
 
 if __name__ == '__main__':
