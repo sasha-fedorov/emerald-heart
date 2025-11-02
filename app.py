@@ -105,8 +105,8 @@ def action():
 
     data = request.get_json()
 
-    action = data.get('action', '').strip().lower()
-    input = data.get('input', '').strip().lower()
+    action = data.get('action', '')
+    input = data.get('input', '')
 
     response = ""
     next_action = action
@@ -122,7 +122,7 @@ def action():
 
             case "login_or_registration":
                 try:
-                    match input:
+                    match input.strip():
                         case "1":
                             response = "Enter username:"
                             next_action = "login_username"
