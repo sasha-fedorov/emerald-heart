@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from messages import MESSAGES, combine_messages
+from messages import GAME, MESSAGES, combine_messages
 
 load_dotenv()
 
@@ -151,6 +151,7 @@ def action():
     response = ""
     next_action = action
     error = ""
+    display = ""
 
     session_user = get_session_user()
 
@@ -158,7 +159,7 @@ def action():
         match action:
             case "init":
                 if (session_user):
-                    response = MESSAGES["main"]
+                    display = MESSAGES["main"]
                     next_action = "main"
                 else:
                     response = MESSAGES["login_or_registration"]
@@ -166,10 +167,63 @@ def action():
 
             case "main":
                 match input.strip():
+                    case "1":
+                        display = GAME[1]
+                        next_action = "game_1"
                     case "0":
                         response = MESSAGES["logout"]
                         next_action = "logout"
 
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_1":
+                match input.strip():
+                    case "1":
+                        display = GAME[11]
+                        next_action = "game_11"
+                    case "2":
+                        display = GAME[12]
+                        next_action = "game_12"
+                    case "3":
+                        error = GAME[13]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_11":
+                match input.strip():
+                    case "1":
+                        display = GAME[21]
+                        next_action = "game_21"
+                    case "3":
+                        error = GAME[23]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_12":
+                match input.strip():
+                    case "1":
+                        display = GAME[21]
+                        next_action = "game_21"
+                    case "3":
+                        error = GAME[23]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_over":
+                match input.strip():
+                    case "1":
+                        display = MESSAGES["main"]
+                        next_action = "main"
+                    case "2":
+                        display = GAME[1]
+                        next_action = "game_1"
                     case _:
                         error = MESSAGES["invalid_input"]
 
@@ -279,7 +333,8 @@ def action():
         result = {
             "response": response,
             "next_action": next_action,
-            "error": error
+            "error": error,
+            "display": display
         }
         return jsonify(result)
     except Exception as e:
@@ -288,4 +343,4 @@ def action():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
