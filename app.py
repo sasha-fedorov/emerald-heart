@@ -273,13 +273,27 @@ def action():
             case "main_selection":
                 match input.strip():
                     case "0":
+                        response = "Confirm logut:\n" \
+                                   "1. Confirm. \n" \
+                                   "2. Return to main menu"
+                        next_action = "logout"
+
+                    case _:
+                        error = "Invalid input. Please try again."
+
+            case "logout":
+                match input.strip():
+                    case "1":
                         terminate_session(session["session_id"])
                         response = "You logged out! \n" \
                                    "Login or create an account: \n " \
                                    "1. Login \n " \
                                    "2. Create an account"
                         next_action = "login_or_registration"
-
+                    case "2":
+                        response = "Main menu. \n" \
+                                   "0. Log out"
+                        next_action = "main_selection"
                     case _:
                         error = "Invalid input. Please try again."
 
