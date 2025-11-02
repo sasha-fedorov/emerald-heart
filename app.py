@@ -267,7 +267,21 @@ def action():
                     next_action = "init"
 
             case "main":
-                pass
+                response = "0. Log out"
+                next_action = "main_selection"
+
+            case "main_selection":
+                match input.strip():
+                    case "0":
+                        terminate_session(session["session_id"])
+                        response = "You logged out! \n" \
+                                   "Login or create an account: \n " \
+                                   "1. Login \n " \
+                                   "2. Create an account"
+                        next_action = "login_or_registration"
+
+                    case _:
+                        error = "Invalid input. Please try again."
 
             case _:
                 error = "Unexpected error occurs, please try again"
