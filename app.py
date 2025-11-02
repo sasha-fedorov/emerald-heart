@@ -208,6 +208,33 @@ def action():
                             "Try another one or type '1' to create an account."
 
             case "login_password":
+                if (input.strip() == "1"):
+                    response = "Login into account. \nEnter username:"
+                    next_action = "registration_username"
+
+                try:
+                    name = session.get("username")
+                    if (name is None):
+                        raise KeyError()
+
+                    user = User.get_user(name)
+                    if (user):
+                        if (user.validate_password(input)):
+                            response = "You are logged in!"
+                            next_action = "main"
+                        else:
+                            error = "Incorrect password.\n Try again or " \
+                                    "type '1' to create an account."
+                    else:
+                        raise KeyError
+                except KeyError:
+                    error = "Something went wrong. Try again."
+                    response = "Login or create an account: \n " \
+                               "1. Login \n " \
+                               "2. Create an account"
+                    next_action = "init"
+
+            case "main":
                 pass
 
             case _:
