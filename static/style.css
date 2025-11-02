@@ -33,3 +33,7 @@ body {
   gap: 0.25rem;
   margin: 1rem;
 }
+
+span {
+  color: crimson;
+}

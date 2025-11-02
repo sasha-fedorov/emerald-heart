@@ -9,7 +9,7 @@ window.onload = function () {
 inputField.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
     const input = inputField.value;
-    printToConsole(`> ${input}`);
+    printToConsole(`> ${input} <br>`);
     sendInput(input);
     inputField.value = '';
   }
@@ -38,7 +38,7 @@ async function sendInput(input = '') {
     printToConsole(data.response);
   }
   if (data.error) {
-    printToConsole(data.error);
+    printToConsole(`<span>${data.error}</span>`);
   }
   if (data.next_action) {
     action = data.next_action;
