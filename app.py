@@ -3,6 +3,7 @@ import re
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 
 load_dotenv()
 
@@ -104,6 +105,26 @@ def is_password_valid(password: str) -> tuple[bool, str]:
     return (True, "")
 
 
+def get_session_user():
+    session_id = session.get("session_id")
+    if (session_id):
+        stored_session = sessions.find_one({"_id": ObjectId(session_id)})
+        if (stored_session):
+            username = stored_session["username"]
+            user = User.get_user(username)
+            if (user):
+                return user
+            else:
+                terminate_session(session_id)
+        else:
+            session.pop("session_id")
+
+
+def terminate_session(session_id):
+    sessions.delete_one({"_id": ObjectId(session_id)})
+    session.pop("session_id")
+
+
 @app.route('/')
 def index():
     """ Returns page to show """
@@ -130,13 +151,19 @@ def action():
     next_action = action
     error = ""
 
+    session_user = get_session_user()
+
     try:
         match action:
             case "init":
-                response = "Login or create an account: \n " \
-                           "1. Login \n " \
-                           "2. Create an account"
-                next_action = "login_or_registration"
+                if (session_user):
+                    next_action = "main"
+                    response = "Main menu"
+                else:
+                    response = "Login or create an account: \n " \
+                            "1. Login \n " \
+                            "2. Create an account"
+                    next_action = "login_or_registration"
 
             case "login_or_registration":
                 try:
@@ -220,7 +247,12 @@ def action():
                     user = User.get_user(name)
                     if (user):
                         if (user.validate_password(input)):
-                            response = "You are logged in!"
+                            _id = sessions.insert_one({"username": name})
+                            session["session_id"] = str(_id.inserted_id)
+
+                            response = "You are logged in! \n" \
+                                       "Main menu. \n" \
+                                       "0. Log out"
                             next_action = "main"
                         else:
                             error = "Incorrect password.\n Try again or " \
