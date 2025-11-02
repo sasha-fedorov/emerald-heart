@@ -25,8 +25,7 @@ inputField.addEventListener('keydown', function (e) {
   }
 });
 
-function printToConsole(text, element = consoleDiv, charDelay = 1) {
-  //don't allow to interrupt printing process by input
+function printToConsole(text, element = consoleDiv, charDelay = 2) {
   const outputText = text.replace(/\n/g, '[BR]');
   let charIndex = 0;
 
@@ -48,8 +47,12 @@ function printToConsole(text, element = consoleDiv, charDelay = 1) {
       // scroll to the bottom
       element.scrollTop = element.scrollHeight;
 
-      // schedule the next character print with deley 1
-      setTimeout(typeCharacter, 1);
+      // schedule the next character print with delay
+      if (char == ' ') {
+        typeCharacter()
+      } else {
+        setTimeout(typeCharacter, charDelay);
+      }
 
     } else {
 
@@ -62,6 +65,8 @@ function printToConsole(text, element = consoleDiv, charDelay = 1) {
 
   // start the typing process
   typeCharacter();
+
+  //don't allow to interrupt printing process by input
   isPrinting = true;
 }
 
