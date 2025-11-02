@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from messages import MESSAGES, combine_messages
 
 load_dotenv()
 
@@ -157,41 +158,42 @@ def action():
         match action:
             case "init":
                 if (session_user):
-                    next_action = "main_selection"
-                    response = response = "Main menu. \n" \
-                                          "0. Log out"
+                    response = MESSAGES["main"]
+                    next_action = "main"
                 else:
-                    response = "Login or create an account: \n " \
-                            "1. Login \n " \
-                            "2. Create an account"
+                    response = MESSAGES["login_or_registration"]
                     next_action = "login_or_registration"
 
+            case "main":
+                match input.strip():
+                    case "0":
+                        response = MESSAGES["logout"]
+                        next_action = "logout"
+
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
             case "login_or_registration":
-                try:
-                    match input.strip():
-                        case "1":
-                            response = "Login into account. \nEnter username:"
-                            next_action = "login_username"
-                        case "2":
-                            response = "Create an account. \nEnter username:"
-                            next_action = "registration_username"
-                        case _: raise ValueError
-                except ValueError:
-                    error = "Invalid input. Please enter 1 or 2"
+                match input.strip():
+                    case "1":
+                        response = MESSAGES["login_username"]
+                        next_action = "login_username"
+                    case "2":
+                        response = MESSAGES["registration_username"]
+                        next_action = "registration_username"
+                    case _:
+                        error = MESSAGES["invalid_input"]
 
             case "registration_username":
                 if (is_username_valid(input)):
                     if (User.get_user(input)):
-                        error = "This username is unavailable. Try another."
+                        error = MESSAGES["username_unavailable"]
                     else:
-                        response = "Enter password:"
-                        next_action = "registration_password"
                         session["username"] = input
+                        response = MESSAGES["enter_password"]
+                        next_action = "registration_password"
                 else:
-                    error = "Invalid username. Rules:\n"\
-                            "- Must start with a letter.\n"\
-                            "- Can contain letters, numbers, '.', '-', '_'.\n"\
-                            "- Length must be between 3 and 20 characters."
+                    error = MESSAGES["invalid_username"]
 
             case "registration_password":
                 is_valid, error = is_password_valid(input)
@@ -204,39 +206,33 @@ def action():
                         user = User(name, input)
                         user.add_user()
 
-                        response = "Account succesfuly created!\n" \
-                                   "Login into account.\n" \
-                                   "Enter username:"
+                        response = combine_messages("registration_success",
+                                                    "login_username")
                         next_action = "login_username"
                     except KeyError:
-                        error = "Something went wrong. Try again."
-                        response = "Login or create an account: \n " \
-                                   "1. Login \n " \
-                                   "2. Create an account"
+                        error = MESSAGES["unexpected_error"]
+                        response = MESSAGES["login_or_registration"]
                         next_action = "init"
 
             case "login_username":
                 if (input.strip() == "1"):
-                    response = "Create an account. \nEnter username:"
+                    response = MESSAGES["registration_username"]
                     next_action = "registration_username"
                 elif (is_username_valid(input)):
                     if (User.get_user(input)):
-                        response = "Enter password:"
-                        next_action = "login_password"
                         session["username"] = input
+                        response = MESSAGES["enter_password"]
+                        next_action = "login_password"
                     else:
-                        error = "This username not exists.\n" \
-                                "Try again or type '1' to create an account."
+                        error = combine_messages("username_not_found",
+                                                 "retry_or_create")
                 else:
-                    error = "Invalid username. Rules:\n"\
-                            "- Must start with a letter.\n"\
-                            "- Can contain letters, numbers, '.', '-', '_'.\n"\
-                            "- Length must be between 3 and 20 characters. \n"\
-                            "Try another one or type '1' to create an account."
+                    error = combine_messages("invalid_username",
+                                             "retry_or_create")
 
             case "login_password":
                 if (input.strip() == "1"):
-                    response = "Create an account. \nEnter username:"
+                    response = MESSAGES["registration_username"]
                     next_action = "registration_username"
                 else:
                     try:
@@ -250,59 +246,35 @@ def action():
                                 _id = sessions.insert_one({"username": name})
                                 session["session_id"] = str(_id.inserted_id)
 
-                                response = "You are logged in! \n" \
-                                           "Main menu. \n" \
-                                           "0. Log out"
-                                next_action = "main_selection"
+                                response = combine_messages("login_success",
+                                                            "main")
+                                next_action = "main"
                             else:
-                                error = "Incorrect password.\n Try again or " \
-                                        "type '1' to create an account."
+                                error = combine_messages("incorrect_password",
+                                                         "retry_or_create")
                         else:
                             raise KeyError
                     except KeyError:
-                        error = "Something went wrong. Try again."
-                        response = "Login or create an account: \n " \
-                                   "1. Login \n " \
-                                   "2. Create an account"
+                        error = MESSAGES["unexpected_error"]
+                        response = MESSAGES["login_or_registration"]
                         next_action = "init"
-
-            case "main":
-                response = "0. Log out"
-                next_action = "main_selection"
-
-            case "main_selection":
-                match input.strip():
-                    case "0":
-                        response = "Confirm logut:\n" \
-                                   "1. Confirm. \n" \
-                                   "2. Return to main menu"
-                        next_action = "logout"
-
-                    case _:
-                        error = "Invalid input. Please try again."
 
             case "logout":
                 match input.strip():
                     case "1":
                         terminate_session(session["session_id"])
-                        response = "You logged out! \n" \
-                                   "Login or create an account: \n " \
-                                   "1. Login \n " \
-                                   "2. Create an account"
+                        response = combine_messages("logut_success",
+                                                    "login_or_registration")
                         next_action = "login_or_registration"
                     case "2":
-                        response = "Main menu. \n" \
-                                   "0. Log out"
-                        next_action = "main_selection"
+                        response = MESSAGES["main"]
+                        next_action = "main"
                     case _:
-                        error = "Invalid input. Please try again."
+                        error = MESSAGES["invalid_input"]
 
             case _:
-                error = "Unexpected error occurs, please try again"
+                error = MESSAGES["fatal_error"]
                 next_action = "init"
-                response = "Login or create an account: \n " \
-                           "1. Login \n " \
-                           "2. Create an account"
 
         result = {
             "response": response,
