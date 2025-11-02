@@ -89,6 +89,14 @@ def is_username_valid(username: str) -> bool:
     return pattern.match(username)
 
 
+def is_password_valid(password: str) -> tuple[bool, str]:
+    if ' ' in password:
+        return (False, "Password can not contain white spaces.")
+    elif (len(password) < 3 or len(password) > 20):
+        return (False, "Password must contain 3 and 20 characters.")
+    return (True, "")
+
+
 @app.route('/')
 def index():
     """ Returns page to show """
@@ -137,8 +145,7 @@ def action():
                     error = "Invalid input. Please enter 1 or 2"
 
             case "registration_username":
-                pattern = re.compile(r"^[A-Za-z][A-Za-z0-9._-]{2,19}$")
-                if (pattern.match(input)):
+                if (is_username_valid(input)):
                     if (is_user_exists(input)):
                         error = "This username is unavailable. Try another."
                     else:
@@ -152,11 +159,8 @@ def action():
                             "- Length must be between 3 and 20 characters."
 
             case "registration_password":
-                if (len(input) != len(data.get('input', ''))):
-                    error = "Password can not contain white spaces."
-                elif (len(input) < 2 | len(input) > 19):
-                    error = "Password must contain 3 and 20 characters."
-                else:
+                is_valid, error = is_password_valid(input)
+                if is_valid:
                     try:
                         name = session.get("username")
                         if (name is None):
