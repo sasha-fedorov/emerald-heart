@@ -34,11 +34,11 @@ async function sendInput(input = '') {
   });
   const data = await res.json();
 
-  if (data.response) {
-    printToConsole(data.response);
-  }
   if (data.error) {
     printToConsole(`<span>${data.error}</span>`);
+  }
+  if (data.response) {
+    printToConsole(data.response);
   }
   if (data.next_action) {
     action = data.next_action;
