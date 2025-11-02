@@ -135,10 +135,10 @@ def action():
                 try:
                     match input.strip():
                         case "1":
-                            response = "Enter username:"
+                            response = "Login into account. \nEnter username:"
                             next_action = "login_username"
                         case "2":
-                            response = "Enter username:"
+                            response = "Create an account. \nEnter username:"
                             next_action = "registration_username"
                         case _: raise ValueError
                 except ValueError:
@@ -168,10 +168,40 @@ def action():
 
                         user = User(name, input)
                         user.create_user()
-                        # next action main menu
+
+                        response = "Account succesfuly created!\n" \
+                                   "Login into account.\n" \
+                                   "Enter username:"
+                        next_action = "login_username"
                     except KeyError:
                         error = "Something went wrong. Try again."
-                        next_action = "login_or_registration"
+                        response = "Login or create an account: \n " \
+                                   "1. Login \n " \
+                                   "2. Create an account"
+                        next_action = "init"
+
+            case "login_username":
+                if (input.strip() == "1"):
+                    response = "Login into account. \nEnter username:"
+                    next_action = "registration_username"
+
+                if (is_username_valid(input)):
+                    if (is_user_exists(input)):
+                        response = "Enter password:"
+                        next_action = "login_password"
+                        session["username"] = input
+                    else:
+                        error = "This username not exists.\n" \
+                                "Try again or type '1' to create an account."
+                else:
+                    error = "Invalid username. Rules:\n"\
+                            "- Must start with a letter.\n"\
+                            "- Can contain letters, numbers, '.', '-', '_'.\n"\
+                            "- Length must be between 3 and 20 characters."\
+                            "Try another one or type '1' to create an account."
+
+            case "login_password":
+                pass
 
             case _:
                 error = "Unexpected error occurs, please try again"
