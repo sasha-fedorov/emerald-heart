@@ -1,6 +1,7 @@
 const inputField = document.getElementById('input');
 const consoleDiv = document.getElementById('output');
 var action = 'init';
+var isPrinting = false
 
 window.onload = function () {
   sendInput()
@@ -11,6 +12,11 @@ document.addEventListener("click", () => {
 });
 
 inputField.addEventListener('keydown', function (e) {
+  //don't allow to interrupt printing process by input
+  if (isPrinting) {
+    return;
+  }
+
   if (e.key === 'Enter') {
     const input = inputField.value;
     printToConsole(`> ${input} \n`);
@@ -55,6 +61,8 @@ function printToConsole(text, charDelay = 1) {
 
   // start the typing process
   typeCharacter();
+  //don't allow to interrupt printing process by input
+  isPrinting = true;
 }
 
 function clearConsole() {
