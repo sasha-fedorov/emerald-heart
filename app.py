@@ -51,25 +51,22 @@ class User:
             raise KeyError()  # When user with this name already exists
         else:
             users.insert_one({"_id": self._id, "password": self.password})
-        """
-        Create a user entry in the database
 
-        Parameters:
+    def validate_password(self, password: str) -> bool:
+        """
+        Validates the provided password against the user's stored password.
+
+        Parameters
         ----------
-        name : str
-            The name of the user.
         password : str
-            The user's password.
+            The password string provided by the user.
 
-        Returns:
-        ----------
-        Created entry.
+        Returns
+        -------
+        bool
+            True if the provided password matches, False otherwise.
         """
-        user = users.find_one({"_id": self._id})
-        if (user):
-            raise KeyError()  # When user with this name already exists
-        else:
-            users.insert_one({"_id": self._id, "password": self.password})
+        return self.password == password
 
     @classmethod
     def get_user(self, username):
