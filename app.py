@@ -263,7 +263,7 @@ def action():
                 match input.strip():
                     case "1":
                         terminate_session(session["session_id"])
-                        response = combine_messages("logut_success",
+                        response = combine_messages("logout_success",
                                                     "login_or_registration")
                         next_action = "login_or_registration"
                     case "2":

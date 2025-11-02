@@ -1,6 +1,7 @@
 OUTPUTS = {
-  "main_selection": "Main menu. "
-                    "\n 0. Log out",
+  "main": "Main menu.\n"
+          "1. Start a quest\n"
+          "0. Log out",
 
   "login_or_registration": "Login or create an account:\n"
                            "1. Login\n "
@@ -18,11 +19,11 @@ OUTPUTS = {
 
   "login_success": "You are logged in!",
 
-  "logut_success": "You are logged out!",
+  "logout_success": "You are logged out!",
 
-  "logut": "Confirm logut:\n"
-           "1. Confirm. \n"
-           "2. Return to main menu",
+  "logout": "Confirm logout:\n"
+            "1. Confirm. \n"
+            "2. Return to main menu",
 
   "retry_or_create": "Try again or type '1' to create an account."
 }
