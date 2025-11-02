@@ -6,6 +6,10 @@ window.onload = function () {
   sendInput()
 };
 
+document.addEventListener("click", () => {
+  document.getElementById("input").focus();
+});
+
 inputField.addEventListener('keydown', function (e) {
   if (e.key === 'Enter') {
     const input = inputField.value;
