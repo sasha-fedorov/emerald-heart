@@ -79,11 +79,14 @@ def create_user(name: str, password: str):
     return user
 
 
-def is_user_exists(username):
+def is_user_exists(username: str) -> bool:
     user = users.find_one({"_id": username})
-    if (user):
-        return True
-    return False
+    return user is not None
+
+
+def is_username_valid(username: str) -> bool:
+    pattern = re.compile(r"^[A-Za-z][A-Za-z0-9._-]{2,19}$")
+    return pattern.match(username)
 
 
 @app.route('/')
