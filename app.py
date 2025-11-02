@@ -157,8 +157,9 @@ def action():
         match action:
             case "init":
                 if (session_user):
-                    next_action = "main"
-                    response = "Main menu"
+                    next_action = "main_selection"
+                    response = response = "Main menu. \n" \
+                                          "0. Log out"
                 else:
                     response = "Login or create an account: \n " \
                             "1. Login \n " \
@@ -216,10 +217,9 @@ def action():
 
             case "login_username":
                 if (input.strip() == "1"):
-                    response = "Login into account. \nEnter username:"
+                    response = "Create an account. \nEnter username:"
                     next_action = "registration_username"
-
-                if (is_username_valid(input)):
+                elif (is_username_valid(input)):
                     if (User.get_user(input)):
                         response = "Enter password:"
                         next_action = "login_password"
@@ -231,40 +231,40 @@ def action():
                     error = "Invalid username. Rules:\n"\
                             "- Must start with a letter.\n"\
                             "- Can contain letters, numbers, '.', '-', '_'.\n"\
-                            "- Length must be between 3 and 20 characters."\
+                            "- Length must be between 3 and 20 characters. \n"\
                             "Try another one or type '1' to create an account."
 
             case "login_password":
                 if (input.strip() == "1"):
-                    response = "Login into account. \nEnter username:"
+                    response = "Create an account. \nEnter username:"
                     next_action = "registration_username"
+                else:
+                    try:
+                        name = session.get("username")
+                        if (name is None):
+                            raise KeyError()
 
-                try:
-                    name = session.get("username")
-                    if (name is None):
-                        raise KeyError()
+                        user = User.get_user(name)
+                        if (user):
+                            if (user.validate_password(input)):
+                                _id = sessions.insert_one({"username": name})
+                                session["session_id"] = str(_id.inserted_id)
 
-                    user = User.get_user(name)
-                    if (user):
-                        if (user.validate_password(input)):
-                            _id = sessions.insert_one({"username": name})
-                            session["session_id"] = str(_id.inserted_id)
-
-                            response = "You are logged in! \n" \
-                                       "Main menu. \n" \
-                                       "0. Log out"
-                            next_action = "main"
+                                response = "You are logged in! \n" \
+                                           "Main menu. \n" \
+                                           "0. Log out"
+                                next_action = "main_selection"
+                            else:
+                                error = "Incorrect password.\n Try again or " \
+                                        "type '1' to create an account."
                         else:
-                            error = "Incorrect password.\n Try again or " \
-                                    "type '1' to create an account."
-                    else:
-                        raise KeyError
-                except KeyError:
-                    error = "Something went wrong. Try again."
-                    response = "Login or create an account: \n " \
-                               "1. Login \n " \
-                               "2. Create an account"
-                    next_action = "init"
+                            raise KeyError
+                    except KeyError:
+                        error = "Something went wrong. Try again."
+                        response = "Login or create an account: \n " \
+                                   "1. Login \n " \
+                                   "2. Create an account"
+                        next_action = "init"
 
             case "main":
                 response = "0. Log out"
