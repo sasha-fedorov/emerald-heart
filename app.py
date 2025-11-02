@@ -44,44 +44,49 @@ class User:
         self._id = name
         self.password = password
 
-    def create_user(self):
-        """ Create a user entry """
+    @classmethod
+    def add_user(self):
+        """
+        Create a user entry in the database
+
+        Parameters:
+        ----------
+        name : str
+            The name of the user.
+        password : str
+            The user's password.
+
+        Returns:
+        ----------
+        Created entry.
+        """
         user = users.find_one({"_id": self._id})
         if (user):
-            raise KeyError()
+            raise KeyError()  # When user with this name already exists
         else:
             users.insert_one({"_id": self._id, "password": self.password})
 
-        return self
+    @classmethod
+    def get_user(self, username):
+        """
+        Get a User entry by username from the database.
 
+        Parameters:
+        ----------
+        self : The class itself (User).
+        username : str
+            The name of the user.
 
-def create_user(name: str, password: str):
-    """
-    Create a user entry
+        Returns:
+        Finded User class entry or None
+        """
 
-    Parameters:
-    ----------
-    name : str
-        The name of the user.
-    password : str
-        The user's password.
-
-    Returns:
-    ----------
-    Created entry.
-    """
-    user = users.find_one({"_id": name})
-    if (user):
-        raise KeyError("User with this name is alredy exists")
-    else:
-        user = users.insert_one({"_id": name, "password": password})
-
-    return user
-
-
-def is_user_exists(username: str) -> bool:
-    user = users.find_one({"_id": username})
-    return user is not None
+        data = users.find_one({"_id": username})
+        if (data):
+            name = data.get('_id')
+            password = data.get('password')
+            return self(name=name, password=password)
+        return data
 
 
 def is_username_valid(username: str) -> bool:
@@ -146,7 +151,7 @@ def action():
 
             case "registration_username":
                 if (is_username_valid(input)):
-                    if (is_user_exists(input)):
+                    if (User.get_user(input)):
                         error = "This username is unavailable. Try another."
                     else:
                         response = "Enter password:"
@@ -166,8 +171,7 @@ def action():
                         if (name is None):
                             raise KeyError()
 
-                        user = User(name, input)
-                        user.create_user()
+                        User.add_user(name, input)
 
                         response = "Account succesfuly created!\n" \
                                    "Login into account.\n" \
@@ -186,7 +190,7 @@ def action():
                     next_action = "registration_username"
 
                 if (is_username_valid(input)):
-                    if (is_user_exists(input)):
+                    if (User.get_user(input)):
                         response = "Enter password:"
                         next_action = "login_password"
                         session["username"] = input
