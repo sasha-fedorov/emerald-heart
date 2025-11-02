@@ -202,7 +202,7 @@ def action():
                             raise KeyError()
 
                         user = User(name, input)
-                        user.create_user()
+                        user.add_user()
 
                         response = "Account succesfuly created!\n" \
                                    "Login into account.\n" \
