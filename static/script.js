@@ -26,48 +26,50 @@ inputField.addEventListener('keydown', function (e) {
 });
 
 function printToConsole(text, element = consoleDiv, charDelay = 2) {
-  const outputText = text.replace(/\n/g, '[BR]');
-  let charIndex = 0;
-
-  function typeCharacter() {
-    if (charIndex < outputText.length) {
-
-      let char = outputText[charIndex];
-
-      // check for the newline marker
-      if (char == '[' && outputText.substring(charIndex, charIndex + 4) == '[BR]') {
-        element.innerHTML += '<br>';
-        charIndex += 4; // skip '[BR]'
-      } else {
-        // append the character/symbol
-        element.innerHTML += char;
-        charIndex++;
-      }
-
-      // scroll to the bottom
-      element.scrollTop = element.scrollHeight;
-
-      // schedule the next character print with delay
-      if (char == ' ') {
-        typeCharacter()
-      } else {
-        setTimeout(typeCharacter, charDelay);
-      }
-
-    } else {
-
-      isPrinting = false;
-      // add final break line 
-      element.innerHTML += '<br>';
-      element.scrollTop = element.scrollHeight;
-    }
-  }
-
-  // start the typing process
-  typeCharacter();
-
-  //don't allow to interrupt printing process by input
+  // don't allow to interrupt printing process by input
   isPrinting = true;
+
+  // return a promise to enable await
+  return new Promise(resolve => {
+    const outputText = text.replace(/\n/g, '[BR]');
+    let charIndex = 0;
+
+    function typeCharacter() {
+      if (charIndex < outputText.length) {
+
+        let char = outputText[charIndex];
+
+        // check for the newline marker
+        if (char == '[' && outputText.substring(charIndex, charIndex + 4) == '[BR]') {
+          element.innerHTML += '<br>';
+          charIndex += 4; //skip '[BR]'
+        } else {
+          //append the character
+          element.innerHTML += char;
+          charIndex++;
+        }
+
+        // scroll to the bottom
+        element.scrollTop = element.scrollHeight;
+
+        // schedule the next character print with delay
+        setTimeout(typeCharacter, charDelay);
+
+      } else {
+        // allow input
+        isPrinting = false;
+        // add final break line
+        element.innerHTML += '<br>';
+        // scroll to the bottom
+        element.scrollTop = element.scrollHeight;
+        // resolve promise
+        resolve();
+      }
+    }
+
+    // start typing process
+    typeCharacter();
+  });
 }
 
 function clearConsole() {
@@ -89,15 +91,15 @@ async function sendInput(input = '') {
 
   if (data.display) {
     clearConsole();
-    printToConsole(data.display)
+    await printToConsole(data.display)
   }
   if (data.error) {
     let span = document.createElement("span")
     consoleDiv.appendChild(span)
-    printToConsole(data.error, span);
+    await printToConsole(data.error, span);
   }
   if (data.response) {
-    printToConsole(data.response);
+    await printToConsole(data.response);
   }
   if (data.next_action) {
     action = data.next_action;
