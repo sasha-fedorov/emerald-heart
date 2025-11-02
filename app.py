@@ -44,8 +44,13 @@ class User:
         self._id = name
         self.password = password
 
-    @classmethod
     def add_user(self):
+        """ Add this user entry in the database """
+        user = users.find_one({"_id": self._id})
+        if (user):
+            raise KeyError()  # When user with this name already exists
+        else:
+            users.insert_one({"_id": self._id, "password": self.password})
         """
         Create a user entry in the database
 
@@ -171,7 +176,8 @@ def action():
                         if (name is None):
                             raise KeyError()
 
-                        User.add_user(name, input)
+                        user = User(name, input)
+                        user.create_user()
 
                         response = "Account succesfuly created!\n" \
                                    "Login into account.\n" \
