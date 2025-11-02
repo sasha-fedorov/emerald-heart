@@ -2,16 +2,19 @@
 <html lang="en">
 
 <head>
+  <title>The Dragon's Lair - Emerald Heart</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-  <div id="output"></div>
-  <div class="input-container">
-    <div>></div>
-    <input id="input" type="text" autofocus placeholder="Type a command..." />
+  <div class="container">
+    <div id="output"></div>
+    <div class="input-container">
+      <div>></div>
+      <input id="input" type="text" autofocus placeholder="Type here..." />
+    </div>
   </div>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
