@@ -25,7 +25,8 @@ inputField.addEventListener('keydown', function (e) {
   }
 });
 
-function printToConsole(text, charDelay = 1) {
+function printToConsole(text, element = consoleDiv, charDelay = 1) {
+  //don't allow to interrupt printing process by input
   const outputText = text.replace(/\n/g, '[BR]');
   let charIndex = 0;
 
@@ -36,16 +37,16 @@ function printToConsole(text, charDelay = 1) {
 
       // check for the newline marker
       if (char == '[' && outputText.substring(charIndex, charIndex + 4) == '[BR]') {
-        consoleDiv.innerHTML += '<br>';
+        element.innerHTML += '<br>';
         charIndex += 4; // skip '[BR]'
       } else {
-        // append the character
-        consoleDiv.innerHTML += char;
+        // append the character/symbol
+        element.innerHTML += char;
         charIndex++;
       }
 
       // scroll to the bottom
-      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      element.scrollTop = element.scrollHeight;
 
       // schedule the next character print with deley 1
       setTimeout(typeCharacter, 1);
@@ -54,14 +55,13 @@ function printToConsole(text, charDelay = 1) {
 
       isPrinting = false;
       // add final break line 
-      consoleDiv.innerHTML += '<br>';
-      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      element.innerHTML += '<br>';
+      element.scrollTop = element.scrollHeight;
     }
   }
 
   // start the typing process
   typeCharacter();
-  //don't allow to interrupt printing process by input
   isPrinting = true;
 }
 
@@ -82,8 +82,14 @@ async function sendInput(input = '') {
   });
   const data = await res.json();
 
+  if (data.display) {
+    clearConsole();
+    printToConsole(data.display)
+  }
   if (data.error) {
-    printToConsole(`<span>${data.error}</span>`);
+    let span = document.createElement("span")
+    consoleDiv.appendChild(span)
+    printToConsole(data.error, span);
   }
   if (data.response) {
     printToConsole(data.response);
