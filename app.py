@@ -1,5 +1,6 @@
 import os
 import re
+import random
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, session
 from pymongo import MongoClient
@@ -180,37 +181,138 @@ def action():
             case "game_1":
                 match input.strip():
                     case "1":
-                        display = GAME[11]
-                        next_action = "game_11"
+                        display = GAME[21]
+                        next_action = "game_21"
                     case "2":
-                        display = GAME[12]
-                        next_action = "game_12"
+                        display = GAME[22]
+                        next_action = "game_22"
                     case "3":
-                        error = GAME[13]
+                        error = GAME[20]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case _:
                         error = MESSAGES["invalid_input"]
 
-            case "game_11":
+            case "game_21":
                 match input.strip():
                     case "1":
-                        display = GAME[21]
-                        next_action = "game_21"
+                        display = GAME[31]
+                        next_action = "game_31"
+                    case "2":
+                        display = GAME[32]
+                        next_action = "game_32"
                     case "3":
-                        error = GAME[23]
+                        error = GAME[30]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case _:
                         error = MESSAGES["invalid_input"]
 
-            case "game_12":
+            case "game_22":
                 match input.strip():
                     case "1":
-                        display = GAME[21]
-                        next_action = "game_21"
+                        display = GAME[33]
+                        next_action = "game_33"
+                    case "2":
+                        display = GAME[34]
+                        next_action = "game_34"
                     case "3":
-                        error = GAME[23]
+                        error = GAME[39]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_31":
+                match input.strip():
+                    case "1":
+                        # 50/50 for the good ending
+                        if bool(random.getrandbits(1)):
+                            display = GAME[46]
+                            response = MESSAGES["game_over"]
+                            next_action = "game_over"
+                        else:
+                            error = GAME[40]
+                            response = MESSAGES["game_over"]
+                            next_action = "game_over"
+                    case "2":
+                        display = GAME[42]
+                        next_action = "game_42"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_32":
+                match input.strip():
+                    case "1":
+                        display = GAME[43]
+                        next_action = "game_42"
+                    case "2":
+                        error = GAME[40]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_33":
+                match input.strip():
+                    case "1":
+                        display = GAME[23]
+                        # response = TODO journal
+                        next_action = "game_23"
+                    case "2":
+                        error = GAME[48]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_34":
+                match input.strip():
+                    case "1":
+                        display = GAME[44]
+                        next_action = "game_23"
+                    case "2":
+                        error = GAME[47]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_42":
+                match input.strip():
+                    case "1":
+                        display = GAME[51]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case "2":
+                        error = GAME[50]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_43":
+                match input.strip():
+                    case "1":
+                        display = GAME[52]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case "2":
+                        error = GAME[59]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "game_44":
+                match input.strip():
+                    case "1":
+                        # if TODO key shield
+                        display = GAME[52]
+                        response = MESSAGES["game_over"]
+                        next_action = "game_over"
+                    case "2":
+                        error = GAME[58]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case _:
@@ -219,8 +321,12 @@ def action():
             case "game_over":
                 match input.strip():
                     case "1":
-                        display = MESSAGES["main"]
-                        next_action = "main"
+                        if session_user:
+                            display = MESSAGES["main"]
+                            next_action = "main"
+                        else:
+                            response = MESSAGES["login_or_registration"]
+                            next_action = "login_or_registration"
                     case "2":
                         display = GAME[1]
                         next_action = "game_1"
