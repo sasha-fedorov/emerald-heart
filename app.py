@@ -50,7 +50,7 @@ class User:
     def add_user(self):
         """ Add this user entry in the database """
         user = users.find_one({"_id": self._id})
-        if (user):
+        if user:
             raise KeyError()  # When user with this name already exists
         else:
             users.insert_one({"_id": self._id, "password": self.password})
@@ -87,7 +87,7 @@ class User:
         """
 
         data = users.find_one({"_id": username})
-        if (data):
+        if data:
             name = data.get('_id')
             password = data.get('password')
             return self(name=name, password=password)
@@ -109,12 +109,12 @@ def is_password_valid(password: str) -> tuple[bool, str]:
 
 def get_session_user():
     session_id = session.get("session_id")
-    if (session_id):
+    if session_id:
         stored_session = sessions.find_one({"_id": ObjectId(session_id)})
-        if (stored_session):
+        if stored_session:
             username = stored_session["username"]
             user = User.get_user(username)
-            if (user):
+            if user:
                 return user
             else:
                 terminate_session(session_id)
@@ -124,7 +124,7 @@ def get_session_user():
 
 def terminate_session(session_id):
     sessions.delete_one({"_id": ObjectId(session_id)})
-    session.pop("session_id")
+    session.clear()
 
 
 @app.route('/')
@@ -139,6 +139,7 @@ def action():
     Event handler from user
 
     Returns result from action as:
+        display:     next text to display on cleared screen
         response:    next text to display
         next_action: next action to do
         error:       error message when occured
@@ -159,7 +160,7 @@ def action():
     try:
         match action:
             case "init":
-                if (session_user):
+                if session_user:
                     display = MESSAGES["main"]
                     next_action = "main"
                 else:
@@ -357,8 +358,8 @@ def action():
                         error = MESSAGES["invalid_input"]
 
             case "registration_username":
-                if (is_username_valid(input)):
-                    if (User.get_user(input)):
+                if is_username_valid(input):
+                    if User.get_user(input):
                         error = MESSAGES["username_unavailable"]
                     else:
                         session["username"] = input
@@ -384,11 +385,11 @@ def action():
                         next_action = "init"
 
             case "login_username":
-                if (input.strip() == "1"):
+                if input.strip() == "1":
                     response = MESSAGES["registration_username"]
                     next_action = "registration_username"
-                elif (is_username_valid(input)):
-                    if (User.get_user(input)):
+                elif is_username_valid(input):
+                    if User.get_user(input):
                         session["username"] = input
                         response = MESSAGES["enter_password"]
                         next_action = "login_password"
@@ -400,15 +401,15 @@ def action():
                                              "retry_or_create")
 
             case "login_password":
-                if (input.strip() == "1"):
+                if input.strip() == "1":
                     response = MESSAGES["registration_username"]
                     next_action = "registration_username"
                 else:
                     try:
                         name = session.get("username")
                         user = User.get_user(name)
-                        if (user):
-                            if (user.validate_password(input)):
+                        if user:
+                            if user.validate_password(input):
                                 _id = sessions.insert_one({"username": name})
                                 session["session_id"] = str(_id.inserted_id)
 
