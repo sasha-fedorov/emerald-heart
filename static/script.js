@@ -47,6 +47,8 @@ function printToConsole(text, element = consoleDiv, charDelay = 2) {
           //append the character
           element.innerHTML += char;
           charIndex++;
+          // scroll to the bottom
+          element.scrollTop = element.scrollHeight;
         }
 
         // scroll to the bottom
