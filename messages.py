@@ -4,8 +4,13 @@ OUTPUTS = {
           "0. Log out",
 
   "login_or_registration": "Login or create an account:\n"
-                           "1. Login\n "
-                           "2. Create an account",
+                           "1. Login\n"
+                           "2. Create an account\n"
+                           "3. Start a quest",
+
+  "unregistred_game": "Without login your progress will not be saved.\n"
+                      "1. Start a quest\n"
+                      "2. Return to login",
 
   "login_username": "Login into account. \n"
                     "Enter username:",

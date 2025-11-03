@@ -235,6 +235,20 @@ def action():
                     case "2":
                         response = MESSAGES["registration_username"]
                         next_action = "registration_username"
+                    case "3":
+                        response = MESSAGES["unregistred_game"]
+                        next_action = "unregistred_game"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "unregistred_game":
+                match input.strip():
+                    case "1":
+                        display = GAME[1]
+                        next_action = "game_1"
+                    case "2":
+                        display = MESSAGES["login_or_registration"]
+                        next_action = "login_or_registration"
                     case _:
                         error = MESSAGES["invalid_input"]
 
