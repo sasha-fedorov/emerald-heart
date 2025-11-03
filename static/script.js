@@ -19,9 +19,10 @@ inputField.addEventListener('keydown', function (e) {
 
   if (e.key === 'Enter') {
     const input = inputField.value;
-    printToConsole(`> ${input} \n`);
-    sendInput(input);
-    inputField.value = '';
+    printToConsole(`> ${input}`).then(_ => {
+      sendInput(input);
+      inputField.value = '';
+    });
   }
 });
 
