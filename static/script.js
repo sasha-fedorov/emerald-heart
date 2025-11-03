@@ -26,7 +26,7 @@ inputField.addEventListener('keydown', function (e) {
   }
 });
 
-function printToConsole(text, element = consoleDiv, charDelay = 2) {
+function printToConsole(text, element = consoleDiv, charDelay = 1) {
   // don't allow to interrupt printing process by input
   isPrinting = true;
 
