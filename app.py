@@ -228,7 +228,7 @@ def action():
                     case "1":
                         # 50/50 for the good ending
                         if bool(random.getrandbits(1)):
-                            display = GAME[46]
+                            display = GAME[41]
                             response = MESSAGES["game_over"]
                             next_action = "game_over"
                         else:
@@ -245,7 +245,7 @@ def action():
                 match input.strip():
                     case "1":
                         display = GAME[43]
-                        next_action = "game_42"
+                        next_action = "game_43"
                     case "2":
                         error = GAME[40]
                         response = MESSAGES["game_over"]
@@ -256,9 +256,8 @@ def action():
             case "game_33":
                 match input.strip():
                     case "1":
-                        display = GAME[23]
-                        # response = TODO journal
-                        next_action = "game_23"
+                        display = GAME[21]
+                        next_action = "game_21"
                     case "2":
                         error = GAME[48]
                         response = MESSAGES["game_over"]
@@ -270,7 +269,7 @@ def action():
                 match input.strip():
                     case "1":
                         display = GAME[44]
-                        next_action = "game_23"
+                        next_action = "game_44"
                     case "2":
                         error = GAME[47]
                         response = MESSAGES["game_over"]
@@ -307,8 +306,7 @@ def action():
             case "game_44":
                 match input.strip():
                     case "1":
-                        # if TODO key shield
-                        display = GAME[52]
+                        display = GAME[51]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case "2":

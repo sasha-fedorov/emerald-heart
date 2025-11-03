@@ -113,7 +113,7 @@ GAME = {
       "---------------------------------------------------------------------\n"
       "The journal speaks of an ancient oath:\n"
       "'The dragon fears its reflection, and the blade that mirrors its flame."
-      "'\nYou also find a sketch of a mirror shield hidden in the caves.\n\n"
+      "'You also find a sketch of a mirror shield hidden in the caves.\n\n"
       "1. Take notes and head for the Cavern of Echoes\n"
       "2. Stay and rest in the tower",
 
@@ -133,6 +133,15 @@ GAME = {
       "You plummet into darkness.\n\n"
       "GAME OVER - Fell to your death.\n",
 
+  41: "                        The Thief of Fire\n"
+      "---------------------------------------------------------------------\n"
+      "You slip through the gold like smoke."
+      "The dragon stirs but doesn't wake."
+      "The Emerald Heart is yours before dawn.\n"
+      "Behind you, the beast still dreams.\n"
+      "You stole the Emerald Heart without a single drop of blood.\n\n"
+      "VICTORY! The clever thief who outwitted a dragon.\n",
+
   42: "                           Side Tunnel\n"
       "---------------------------------------------------------------------\n"
       "You discover a mirror shield lying in a pool of water, shining faintly."
@@ -151,17 +160,8 @@ GAME = {
       "---------------------------------------------------------------------\n"
       "You follow the tunnel and find yourself behind the dragon's lair.\n"
       "You can see the Emerald Heart through cracks in the wall.\n\n"
-      "1. Use the key on the stone door"
+      "1. Use the key on the stone door\n"
       "2. Try to break the wall",
-
-  46: "                        The Thief of Fire\n"
-      "---------------------------------------------------------------------\n"
-      "You slip through the gold like smoke."
-      "The dragon stirs but doesn't wake."
-      "The Emerald Heart is yours before dawn.\n"
-      "Behind you, the beast still dreams.\n"
-      "You stole the Emerald Heart without a single drop of blood.\n\n"
-      "VICTORY! The clever thief who outwitted a dragon.\n",
 
   47: "The tunnel seals shut forever, and your chance is lost.\n\n"
       "GAME OVER - Missed your destiny.\n",
