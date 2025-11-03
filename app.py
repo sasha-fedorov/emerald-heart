@@ -254,9 +254,6 @@ def action():
                 if is_valid:
                     try:
                         name = session.get("username")
-                        if (name is None):
-                            raise KeyError()
-
                         user = User(name, input)
                         user.add_user()
 
@@ -291,9 +288,6 @@ def action():
                 else:
                     try:
                         name = session.get("username")
-                        if (name is None):
-                            raise KeyError()
-
                         user = User.get_user(name)
                         if (user):
                             if (user.validate_password(input)):
