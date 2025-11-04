@@ -10,11 +10,6 @@ window.onload = function () {
   sendInput(); // Send an empty input to the backend to start the 'init' action
 };
 
-// Focus on the input field whenever the user clicks anywhere on the page
-document.addEventListener("click", () => {
-  document.getElementById("input").focus();
-});
-
 // Event listener for Enter key presses in the input field
 inputField.addEventListener('keydown', function (e) {
   // Prevent input on printing to do not interrupt it
@@ -124,4 +119,6 @@ async function sendInput(input = '') {
   if (data.next_action) {
     action = data.next_action;
   }
+
+  document.getElementById("input").focus();
 }
