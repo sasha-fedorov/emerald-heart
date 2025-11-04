@@ -27,7 +27,10 @@ OUTPUTS = {
             "1. Confirm. \n"
             "2. Return to main menu",
 
-  "retry_or_create": "Try again or type '1' to create an account.",
+  "retry_or_create": "Try again or type\n"
+                      "1. To login into accout\n"
+                      "2. To create an account\n"
+                      "3. To start a quest without login",
 
   "game_over": "1. Return to main menu\n"
                "2. Start a new quest.",

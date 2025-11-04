@@ -565,17 +565,35 @@ def action():
                         error = MESSAGES["invalid_input"]
 
             case "registration_username":
-                # Handle username input during registration
-                if is_username_valid(input):
-                    if User.get_user(input):
-                        error = MESSAGES["username_unavailable"]
-                    else:
-                        # Store username temporarily in session
-                        session["username"] = input
-                        response = MESSAGES["enter_password"]
-                        next_action = "registration_password"
-                else:
-                    error = MESSAGES["invalid_username"]
+                strip = input.strip()
+                match strip:
+                    # Option to switch to login
+                    case "1":
+                        response = MESSAGES["login_username"]
+                        next_action = "login_username"
+                    # Option to switch to registration
+                    case "2":
+                        response = MESSAGES["registration_username"]
+                        next_action = "registration_username"
+                    # Option to play unregistred
+                    case "3":
+                        # Play without registering
+                        response = MESSAGES["unregistred_game"]
+                        next_action = "unregistred_game"
+                    case _:
+                        # Handle username input during registration
+                        if is_username_valid(input):
+                            if User.get_user(input):
+                                error = combine_messages(
+                                    "username_unavailable",
+                                    "retry_or_create")
+                            else:
+                                # Store username temporarily in session
+                                session["username"] = input
+                                response = MESSAGES["enter_password"]
+                                next_action = "registration_password"
+                        else:
+                            error = MESSAGES["invalid_username"]
 
             case "registration_password":
                 # Handle password input during registration
@@ -600,57 +618,81 @@ def action():
                     error = error_msg  # Corresponding password error message
 
             case "login_username":
-                # Handle username input during login
-                if input.strip() == "1":
+                strip = input.strip()
+                match strip:
+                    # Option to switch to login
+                    case "1":
+                        response = MESSAGES["login_username"]
+                        next_action = "login_username"
                     # Option to switch to registration
-                    response = MESSAGES["registration_username"]
-                    next_action = "registration_username"
-                elif is_username_valid(input):
-                    if User.get_user(input):
-                        # Username found, proceed to password
-                        session["username"] = input
-                        response = MESSAGES["enter_password"]
-                        next_action = "login_password"
-                    else:
-                        # Username not found
-                        error = combine_messages("username_not_found",
-                                                 "retry_or_create")
-                else:
-                    # Invalid format
-                    error = combine_messages("invalid_username",
-                                             "retry_or_create")
-
-            case "login_password":
-                # Handle password input during login
-                if input.strip() == "1":
-                    # Option to switch to registration
-                    response = MESSAGES["registration_username"]
-                    next_action = "registration_username"
-                else:
-                    try:
-                        # Pull username temporarily from session
-                        name = session.get("username")
-                        user = User.get_user(name)
-                        if user:
-                            if user.validate_password(input):
-                                # Create session in DB and Flask session
-                                _id = sessions.insert_one({"username": name})
-                                session["session_id"] = str(_id.inserted_id)
-
-                                display = MESSAGES["main"]
-                                next_action = "main"  # Successful login
+                    case "2":
+                        response = MESSAGES["registration_username"]
+                        next_action = "registration_username"
+                    # Option to play unregistred
+                    case "3":
+                        # Play without registering
+                        response = MESSAGES["unregistred_game"]
+                        next_action = "unregistred_game"
+                    case _:
+                        if is_username_valid(input):
+                            if User.get_user(input):
+                                # Username found, proceed to password
+                                session["username"] = input
+                                response = MESSAGES["enter_password"]
+                                next_action = "login_password"
                             else:
-                                # Password incorrect
-                                error = combine_messages("incorrect_password",
+                                # Username not found
+                                error = combine_messages("username_not_found",
                                                          "retry_or_create")
                         else:
-                            # User object or Flask session value read
-                            # retrieval failed unexpectedly
-                            raise KeyError
-                    except KeyError:
-                        error = MESSAGES["unexpected_error"]
-                        response = MESSAGES["login_or_registration"]
-                        next_action = "init"
+                            # Invalid format
+                            error = combine_messages("invalid_username",
+                                                     "retry_or_create")
+
+            case "login_password":
+                strip = input.strip()
+                match strip:
+                    # Option to switch to login
+                    case "1":
+                        response = MESSAGES["login_username"]
+                        next_action = "login_username"
+                    # Option to switch to registration
+                    case "2":
+                        response = MESSAGES["registration_username"]
+                        next_action = "registration_username"
+                    # Option to play unregistred
+                    case "3":
+                        # Play without registering
+                        response = MESSAGES["unregistred_game"]
+                        next_action = "unregistred_game"
+                    case _:
+                        try:
+                            # Pull username temporarily from session
+                            name = session.get("username")
+                            user = User.get_user(name)
+                            if user:
+                                if user.validate_password(input):
+                                    # Create session in DB and Flask session
+                                    _id = sessions.insert_one(
+                                        {"username": name})
+                                    session["session_id"] = str(
+                                        _id.inserted_id)
+
+                                    display = MESSAGES["main"]
+                                    next_action = "main"  # Successful login
+                                else:
+                                    # Password incorrect
+                                    error = combine_messages(
+                                        "incorrect_password",
+                                        "retry_or_create")
+                            else:
+                                # User object or Flask session value read
+                                # retrieval failed unexpectedly
+                                raise KeyError
+                        except KeyError:
+                            error = MESSAGES["unexpected_error"]
+                            response = MESSAGES["login_or_registration"]
+                            next_action = "init"
 
             case "logout":
                 # Logout confirmation
