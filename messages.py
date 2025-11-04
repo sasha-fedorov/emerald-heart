@@ -1,6 +1,7 @@
 OUTPUTS = {
   "main": "Main menu.\n"
           "1. Start a quest\n"
+          "2. Quest History\n"
           "0. Log out",
 
   "login_or_registration": "Login or create an account:\n"
@@ -33,8 +34,23 @@ OUTPUTS = {
   "retry_or_create": "Try again or type '1' to create an account.",
 
   "game_over": "1. Return to main menu\n"
-               "2. Start a new game."
+               "2. Start a new game.",
 
+  "stats": "                          Quest History\n"
+            "-----------------------------------"
+            "----------------------------------\n"
+            "Your efforts are recorded below:\n\n"
+            "Victories:      {wins_count}\n"
+            "Loses:          {loses_count}\n"
+            "Quests Started: {total_count}\n\n"
+            "1. Return to main menu\n"
+            "2. Reset Quest History",
+
+  "stats_reset": "Confirm resetting your Quest History:\n"
+            "1. Confirm. \n"
+            "2. Deny",
+
+  "stats_reset_done": "\nYour quest history has been successfully reset."
 }
 
 
@@ -201,7 +217,6 @@ GAME = {
   50: "Without protection, you face the dragon - "
       "and the last thing you see is flame.\n\n"
       "GAME OVER - No shield, no chance.\n",
-
 }
 
 

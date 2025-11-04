@@ -92,6 +92,15 @@ class User:
         if result:
             self.loses = result
 
+    def reset_stats(self):
+        """ Reset wins and loses of this user entry in the database """
+        self.wins = 0
+        self.loses = 0
+        res_stats = {"$set": self.__to_mongo_dict()}
+        result = users.update_one({"_id": self._id}, res_stats)
+        if result:
+            return self
+
     def validate_password(self, password: str) -> bool:
         """
         Validates the provided password against the user's stored password.
@@ -127,8 +136,8 @@ class User:
         if data:
             name = data.get('_id')
             password = data.get('password')
-            wins = data.get('wins')
-            loses = data.get('loses')
+            wins = data.get('wins', 0)
+            loses = data.get('loses', 0)
             return cls(name=name, password=password, wins=wins, loses=loses)
         return data
 
@@ -164,6 +173,17 @@ def get_session_user():
 def terminate_session(session_id):
     sessions.delete_one({"_id": ObjectId(session_id)})
     session.clear()
+
+
+def get_stats_dispay(user: User):
+    """ Returns game stats information fufilled with user data  """
+    wins = user.wins
+    loses = user.loses
+    total = wins + loses
+
+    return MESSAGES["stats"].format(wins_count=wins,
+                                    loses_count=loses,
+                                    total_count=total)
 
 
 @app.route('/')
@@ -211,6 +231,9 @@ def action():
                     case "1":
                         display = GAME[1]
                         next_action = "game_1"
+                    case "2":
+                        display = get_stats_dispay(session_user)
+                        next_action = "stats"
                     case "0":
                         response = MESSAGES["logout"]
                         next_action = "logout"
@@ -410,6 +433,30 @@ def action():
                     case "2":
                         display = GAME[1]
                         next_action = "game_1"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "stats":
+                match input.strip():
+                    case "1":
+                        display = MESSAGES["main"]
+                        next_action = "main"
+                    case "2":
+                        response = MESSAGES["stats_reset"]
+                        next_action = "stats_reset"
+                    case _:
+                        error = MESSAGES["invalid_input"]
+
+            case "stats_reset":
+                match input.strip():
+                    case "1":
+                        session_user = session_user.reset_stats()
+                        display = get_stats_dispay(session_user)
+                        response = MESSAGES["stats_reset_done"]
+                        next_action = "stats_reset"
+                    case "2":
+                        display = get_stats_dispay(session_user)
+                        next_action = "stats"
                     case _:
                         error = MESSAGES["invalid_input"]
 
