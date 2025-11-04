@@ -1,5 +1,6 @@
 import os
 import re
+import bcrypt
 import random
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, session
@@ -27,34 +28,52 @@ class User:
     ----------
     _id : str
         The name of the user (used as id).
-    password : str
-        The user's password.
+    password_hash : str
+        The user's password hash.
     wins: int
         Winned games count.
     loses: int
         Losed games count.
     """
 
-    def __init__(self, name: str, password: str,
+    def __init__(self, _id: str, password_hash: str,
                  wins: int = 0, loses: int = 0):
         """
         Initializes a new User instance.
 
         Parameters:
         ----------
-        name : str
-            The name of the user.
+        _id : str
+            The name of the user (used as id).
         password : str
-            The user's password.
+            The user's password hash.
         wins: int
             Winned games count.
         loses: int
             Losed games count.
         """
-        self._id = name
-        self.password = password
+
+        self._id = _id
+        self.password_hash = password_hash
         self.wins = wins
         self.loses = loses
+
+    @classmethod
+    def add_user(cls, username: str, password: str):
+        """
+        Add a new user entry in the database
+
+        Returns: Created entitry
+        """
+        if cls.get_user(username):
+            raise KeyError()  # When user with this name already exists
+        else:
+            salt = bcrypt.gensalt(rounds=8)
+            hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+            password_hash = hash.decode('utf-8')
+            user = cls(_id=username, password_hash=password_hash)
+            users.insert_one(user.__to_mongo_dict())
+            return user
 
     def __to_mongo_dict(self):
         """
@@ -65,18 +84,10 @@ class User:
         """
         return {
             "_id": self._id,
-            "password": self.password,
+            "password_hash": self.password_hash,
             "wins": self.wins,
             "loses": self.loses
         }
-
-    def add_user(self):
-        """ Add this user entry in the database """
-        user = users.find_one({"_id": self._id})
-        if user:
-            raise KeyError()  # When user with this name already exists
-        else:
-            users.insert_one(self.__to_mongo_dict())
 
     def increase_wins(self):
         """ Increase wins of this user entry in the database """
@@ -103,7 +114,7 @@ class User:
 
     def validate_password(self, password: str) -> bool:
         """
-        Validates the provided password against the user's stored password.
+        Validates the provided password against the stored bcrypt hash.
 
         Parameters
         ----------
@@ -115,7 +126,8 @@ class User:
         bool
             True if the provided password matches, False otherwise.
         """
-        return self.password == password
+        return bcrypt.checkpw(password.encode('utf-8'),
+                              self.password_hash.encode('utf-8'))
 
     @classmethod
     def get_user(cls, username):
@@ -134,11 +146,12 @@ class User:
 
         data = users.find_one({"_id": username})
         if data:
-            name = data.get('_id')
-            password = data.get('password')
+            _id = data.get('_id')
+            password_hash = data.get('password_hash')
             wins = data.get('wins', 0)
             loses = data.get('loses', 0)
-            return cls(name=name, password=password, wins=wins, loses=loses)
+            return cls(_id=_id, password_hash=password_hash,
+                       wins=wins, loses=loses)
         return data
 
 
@@ -501,8 +514,7 @@ def action():
                 if is_valid:
                     try:
                         name = session.get("username")
-                        user = User(name, input)
-                        user.add_user()
+                        User.add_user(name, input)
 
                         response = combine_messages("registration_success",
                                                     "login_username")
