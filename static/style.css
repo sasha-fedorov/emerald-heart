@@ -1,6 +1,6 @@
 :root {
   /* main font formula */
-  font-size: min(calc(100vw / 40), calc(100vh / 28));
+  font-size: min(calc(100vw / 42), calc(100vh / 30));
   --font-color: limegreen;
   --bg-color: #131313;
   --bg-color-secondary: #2d2d2d;
@@ -34,8 +34,8 @@ body {
 
 /* box around container */
 .box {
-  width: 40rem;
-  height: 28rem;
+  width: 42rem;
+  height: 30rem;
 
   position: fixed;
   inset: 0px;
@@ -46,7 +46,7 @@ body {
 
 /* container with console and input */
 .container {
-  width: 38rem;
+  width: 40rem;
   height: 24rem;
   margin: 1rem;
   padding: 1rem 0;
@@ -73,9 +73,23 @@ span {
 /* adjust height for mobile devices */
 @media (max-width: 768px) and (max-aspect-ratio: 3/4) {
   :root {
-    font-size: calc(100vw / 40);
+    font-size: calc(100vw / 42);
+    /* calculate optimal input font size */
+    --input-font-size: calc(max(calc(100vw / 42), 16px));
   }
 
+  /* setting font size of input to prevent zoom on form */
+  .input-container,
+  #input {
+    font-size: var(--input-font-size);
+  }
+
+  /* decrese output height on input form height*/
+  #output {
+    height: calc(22rem - var(--input-font-size));
+  }
+
+  /* disabling vertival middle aligment */
   .box {
     margin: 0;
   }
