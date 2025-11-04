@@ -1,11 +1,13 @@
+/* jshint esversion: 8 */
+
 const inputField = document.getElementById('input');
 const consoleDiv = document.getElementById('output');
 var action = 'init'; // Global variable tracking the current game state
-var isPrinting = false // Flag to prevent user input on printing
+var isPrinting = false; // Flag to prevent user input on printing
 
 // Function called when the page finishes loading
 window.onload = function () {
-  sendInput() // Send an empty input to the backend to start the 'init' action
+  sendInput(); // Send an empty input to the backend to start the 'init' action
 };
 
 // Focus on the input field whenever the user clicks anywhere on the page
@@ -83,7 +85,7 @@ function printToConsole(text, element = consoleDiv, charDelay = 1) {
 
 // Clears all content from the console output
 function clearConsole() {
-  consoleDiv.innerHTML = ""
+  consoleDiv.innerHTML = "";
 }
 
 // Sends user input and the current game state to the Flask backend via AJAX.
@@ -106,12 +108,12 @@ async function sendInput(input = '') {
   // Handle 'display': New screen content (clears the console first)
   if (data.display) {
     clearConsole();
-    await printToConsole(data.display)
+    await printToConsole(data.display);
   }
   // Handle 'error': Error message (prints directly to console)
   if (data.error) {
-    let span = document.createElement("span") // Use the span element to style errors
-    consoleDiv.appendChild(span)
+    let span = document.createElement("span"); // Use the span element to style errors
+    consoleDiv.appendChild(span);
     await printToConsole(data.error, span);
   }
   // Handle 'response': Prompt or message (prints directly to console)
