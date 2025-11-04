@@ -9,7 +9,7 @@ OUTPUTS = {
                            "2. Create an account\n"
                            "3. Start a quest",
 
-  "unregistred_game": "Without login your progress will not be saved.\n"
+  "unregistred_game": "Without login your Quest History will not be saved.\n"
                       "1. Start a quest\n"
                       "2. Return to login",
 
@@ -30,7 +30,7 @@ OUTPUTS = {
   "retry_or_create": "Try again or type '1' to create an account.",
 
   "game_over": "1. Return to main menu\n"
-               "2. Start a new game.",
+               "2. Start a new quest.",
 
   "stats": "                          Quest History\n"
             "-----------------------------------"
