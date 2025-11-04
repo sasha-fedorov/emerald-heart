@@ -29,9 +29,14 @@ class User:
         The name of the user (used as id).
     password : str
         The user's password.
+    wins: int
+        Winned games count.
+    loses: int
+        Losed games count.
     """
 
-    def __init__(self, name: str, password: str):
+    def __init__(self, name: str, password: str,
+                 wins: int = 0, loses: int = 0):
         """
         Initializes a new User instance.
 
@@ -41,11 +46,29 @@ class User:
             The name of the user.
         password : str
             The user's password.
-        session_id : str
-            The user current session ID.
+        wins: int
+            Winned games count.
+        loses: int
+            Losed games count.
         """
         self._id = name
         self.password = password
+        self.wins = wins
+        self.loses = loses
+
+    def __to_mongo_dict(self):
+        """
+        Private method to convert entity to a MongoDB dictionary
+
+        Returns:
+        MongoDB dictionary
+        """
+        return {
+            "_id": self._id,
+            "password": self.password,
+            "wins": self.wins,
+            "loses": self.loses
+        }
 
     def add_user(self):
         """ Add this user entry in the database """
@@ -53,7 +76,21 @@ class User:
         if user:
             raise KeyError()  # When user with this name already exists
         else:
-            users.insert_one({"_id": self._id, "password": self.password})
+            users.insert_one(self.__to_mongo_dict())
+
+    def increase_wins(self):
+        """ Increase wins of this user entry in the database """
+        inc_wins = {"$inc": {"wins": 1}}
+        result = users.update_one({"_id": self._id}, inc_wins)
+        if result:
+            self.wins = result
+
+    def increase_loses(self):
+        """ Increase loses of this user entry in the database """
+        inc_loses = {"$inc": {"loses": 1}}
+        result = users.update_one({"_id": self._id}, inc_loses)
+        if result:
+            self.loses = result
 
     def validate_password(self, password: str) -> bool:
         """
@@ -90,7 +127,9 @@ class User:
         if data:
             name = data.get('_id')
             password = data.get('password')
-            return cls(name=name, password=password)
+            wins = data.get('wins')
+            loses = data.get('loses')
+            return cls(name=name, password=password, wins=wins, loses=loses)
         return data
 
 
@@ -188,6 +227,9 @@ def action():
                         display = GAME[22]
                         next_action = "game_22"
                     case "3":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[20]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -203,6 +245,9 @@ def action():
                         display = GAME[32]
                         next_action = "game_32"
                     case "3":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[30]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -218,6 +263,9 @@ def action():
                         display = GAME[34]
                         next_action = "game_34"
                     case "3":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[39]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -229,10 +277,16 @@ def action():
                     case "1":
                         # 50/50 for the good ending
                         if bool(random.getrandbits(1)):
+                            if session_user:
+                                session_user = session_user.increase_wins()
+
                             display = GAME[41]
                             response = MESSAGES["game_over"]
                             next_action = "game_over"
                         else:
+                            if session_user:
+                                session_user = session_user.increase_loses()
+
                             error = GAME[40]
                             response = MESSAGES["game_over"]
                             next_action = "game_over"
@@ -248,6 +302,9 @@ def action():
                         display = GAME[43]
                         next_action = "game_43"
                     case "2":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[40]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -260,6 +317,9 @@ def action():
                         display = GAME[21]
                         next_action = "game_21"
                     case "2":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[48]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -272,6 +332,9 @@ def action():
                         display = GAME[44]
                         next_action = "game_44"
                     case "2":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[47]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -281,10 +344,16 @@ def action():
             case "game_42":
                 match input.strip():
                     case "1":
+                        if session_user:
+                            session_user = session_user.increase_wins()
+
                         display = GAME[51]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case "2":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[50]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -294,10 +363,16 @@ def action():
             case "game_43":
                 match input.strip():
                     case "1":
+                        if session_user:
+                            session_user = session_user.increase_wins()
+
                         display = GAME[52]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case "2":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[59]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
@@ -307,10 +382,16 @@ def action():
             case "game_44":
                 match input.strip():
                     case "1":
+                        if session_user:
+                            session_user = session_user.increase_wins()
+
                         display = GAME[51]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
                     case "2":
+                        if session_user:
+                            session_user = session_user.increase_loses()
+
                         error = GAME[58]
                         response = MESSAGES["game_over"]
                         next_action = "game_over"
