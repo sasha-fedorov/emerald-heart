@@ -72,7 +72,7 @@ class User:
         return self.password == password
 
     @classmethod
-    def get_user(self, username):
+    def get_user(cls, username):
         """
         Get a User entry by username from the database.
 
@@ -90,7 +90,7 @@ class User:
         if data:
             name = data.get('_id')
             password = data.get('password')
-            return self(name=name, password=password)
+            return cls(name=name, password=password)
         return data
 
 
