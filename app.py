@@ -25,8 +25,8 @@ class User:
 
     Attributes:
     ----------
-    name : str
-        The name of the user.
+    _id : str
+        The name of the user (used as id).
     password : str
         The user's password.
     """
