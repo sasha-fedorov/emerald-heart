@@ -526,7 +526,7 @@ def action():
                         # Using display to update reseted stats
                         display = get_stats_dispay(session_user)
                         response = MESSAGES["stats_reset_done"]
-                        next_action = "stats_reset"  # Stay on stats view
+                        next_action = "stats"  # Stay on stats view
                     case "2":
                         # Cancel reset, redraw to stats menu
                         display = get_stats_dispay(session_user)
