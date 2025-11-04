@@ -553,8 +553,7 @@ def action():
                                 _id = sessions.insert_one({"username": name})
                                 session["session_id"] = str(_id.inserted_id)
 
-                                response = combine_messages("login_success",
-                                                            "main")
+                                display = MESSAGES["main"]
                                 next_action = "main"
                             else:
                                 error = combine_messages("incorrect_password",
@@ -570,11 +569,10 @@ def action():
                 match input.strip():
                     case "1":
                         terminate_session(session["session_id"])
-                        response = combine_messages("logout_success",
-                                                    "login_or_registration")
+                        display = MESSAGES["login_or_registration"]
                         next_action = "login_or_registration"
                     case "2":
-                        response = MESSAGES["main"]
+                        display = MESSAGES["main"]
                         next_action = "main"
                     case _:
                         error = MESSAGES["invalid_input"]

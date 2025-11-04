@@ -23,10 +23,6 @@ OUTPUTS = {
 
   "registration_success": "Account succesfuly created!\n",
 
-  "login_success": "You are logged in!",
-
-  "logout_success": "You are logged out!",
-
   "logout": "Confirm logout:\n"
             "1. Confirm. \n"
             "2. Return to main menu",
