@@ -86,6 +86,11 @@ This project is **deployed on Render** and can be accessed at: **[https://emeral
 - Disabling or interrupting typewrite animation for users who prefer faster text delivery.
 
 
+## Testing and Bugfixing
+
+For detailed information about testing, bugfixing, validation, please refer to **[TESTING.md](TESTING.md)**.
+
+
 ## Design
 
 - **Visual Concept:**
