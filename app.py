@@ -180,9 +180,9 @@ def is_password_valid(password: str) -> tuple[bool, str]:
     Checks if the password meets the basic complexity requirements.
     """
     if ' ' in password:
-        return (False, "Password can not contain white spaces.")
+        return (False, MESSAGES["incorrect_password_spaces"])
     elif (len(password) < 3 or len(password) > 20):
-        return (False, "Password must contain 3 and 20 characters.")
+        return (False, MESSAGES["incorrect_password_len"])
     return (True, "")
 
 

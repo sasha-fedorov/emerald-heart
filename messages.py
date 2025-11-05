@@ -69,7 +69,11 @@ ERRORS = {
                       "- Can contain letters, numbers, '.', '-', '_'.\n"
                       "- Length must be between 3 and 20 characters.",
 
-  "incorrect_password": "Incorrect password."
+  "incorrect_password": "Incorrect password.",
+
+  "incorrect_password_spaces": "Password can not contain white spaces.",
+
+  "incorrect_password_len": "Password must contain from 3 to 20 characters."
 }
 
 
