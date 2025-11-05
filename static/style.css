@@ -13,7 +13,7 @@ body {
 
 /* console output */
 #output {
-  height: 22rem;
+  height: 24rem;
   margin: 0 1rem 1rem;
   overflow-y: auto;
   scrollbar-color: var(--font-color) var(--bg-color);
@@ -47,7 +47,7 @@ body {
 /* container with console and input */
 .container {
   width: 40rem;
-  height: 24rem;
+  height: 26rem;
   margin: 1rem;
   padding: 1rem 0;
 
